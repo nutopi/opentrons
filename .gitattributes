@@ -1,2 +1,5 @@
 # Set the default behavior, in case people don't have core.autocrlf set.
 * text=auto
+# But the scripts in the api resources directory must always have lf
+# including in the working tree in case the user does a push-api
+./api/opentrons/resources/** text eol=lf
