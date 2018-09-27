@@ -1,7 +1,8 @@
-import uuidv1 from 'uuid/v1'
+// @flow
+import uuid from 'uuid/v4'
 
 function assignId () {
-  return uuidv1()
+  return uuid()
 }
 
 export default assignId

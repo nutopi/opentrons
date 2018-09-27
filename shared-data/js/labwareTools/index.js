@@ -51,7 +51,7 @@ type Schema = {
   wells: {[wellName: string]: Well},
 }
 
-function determineOrdering (grid: Array<number>): Array<Array<string>> {
+function determineOrdering (grid: [number, number]): Array<Array<string>> {
   var ordering = []
   var rows = grid[0]
   var cols = grid[1]
@@ -73,7 +73,11 @@ function determineOrdering (grid: Array<number>): Array<Array<string>> {
   return ordering
 }
 // Private helper function to return individual well output
-function calculateCoordinates (well: Well, ordering: Array<Array<string>>, spacing: Array<number>): {[wellName: string]: Well} {
+function calculateCoordinates (
+  well: Well,
+  ordering: Array<Array<string>>,
+  spacing: [number, number]
+): {[wellName: string]: Well} {
   let wells = {}
   var rowSpacing = spacing[0]
   var colSpacing = spacing[1]
@@ -93,22 +97,36 @@ function calculateCoordinates (well: Well, ordering: Array<Array<string>>, spaci
   return wells
 }
 
+export type RegularLabwareProps = {|
+  metadata: Metadata,
+  parameters: Params,
+  dimensions: Dimensions,
+  grid: [number, number],
+  spacing: [number, number],
+  well: Well,
+  vendor?: Vendor,
+|}
+
 // Make function public via export function
 // Need slot offset
 // well spacing
 // use display category to do logic checks (tiprack has tip length etc)
 // rows/cols
 // customization can contain nothing OR ??
-export function createRegularLabware (metadata: Metadata, parameters: Params, dimensions: Dimensions, grid: Array<number>, spacing: Array<number>, well: Well, vendor?: Vendor): Schema {
-  const otId = assignId()
-  const ordering = determineOrdering(grid)
-  var definition = null
+export function createRegularLabware (props: RegularLabwareProps): Schema {
+  const ordering = determineOrdering(props.grid)
 
-  const wells = calculateCoordinates(well, ordering, spacing)
-  if (vendor) {
-    definition = {otId, deprecated: false, metadata, dimensions, parameters, ordering, wells, vendor}
-  } else {
-    definition = {otId, deprecated: false, metadata, dimensions, parameters, ordering, wells}
+  const definition: Schema = {
+    ordering,
+    otId: assignId(),
+    deprecated: false,
+    metadata: props.metadata,
+    dimensions: props.dimensions,
+    parameters: props.parameters,
+    wells: calculateCoordinates(props.well, ordering, props.spacing),
   }
+
+  if (props.vendor) definition.vendor = props.vendor
+
   return definition
 }
