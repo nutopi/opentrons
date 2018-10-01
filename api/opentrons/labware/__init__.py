@@ -1,5 +1,4 @@
-from typing import List, Tuple
-from collections import OrderedDict
+from typing import List, Tuple, Dict
 
 
 class Well:
@@ -33,19 +32,19 @@ class Labware:
     def wells(self) -> List[Well]:
         pass
 
-    def wells_by_index(self) -> OrderedDict[str, Well]:
+    def wells_by_index(self) -> Dict[str, Well]:
         pass
 
     def rows(self) -> List[List[Well]]:
         pass
 
-    def rows_by_index(self) -> OrderedDict[str, List[Well]]:
+    def rows_by_index(self) -> Dict[str, List[Well]]:
         pass
 
     def columns(self) -> List[List[Well]]:
         pass
 
-    def columns_by_index(self) -> OrderedDict[str, List[Well]]:
+    def columns_by_index(self) -> Dict[str, List[Well]]:
         pass
 
 

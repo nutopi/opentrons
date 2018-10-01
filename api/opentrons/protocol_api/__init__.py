@@ -10,18 +10,17 @@ import os
 from typing import Callable, List, Dict
 
 from opentrons.labware import Well, Labware, load
+from . import back_compat
 
-
-def run(protocol_callable: Callable[['ProtocolContext'], None] = None,
+def run(protocol_bytes: bytes = None,
         protocol_json: str = None,
         simulate: bool = False,
         context: 'ProtocolContext' = None):
         """ Create a ProtocolRunner instance from one of a variety of protocol
         sources.
 
-        :param protocol_callable: If the protocol can be represented as a
-        Python callable, pass it here. The callable should take a context
-        as its only argument.
+        :param protocol_bytes: If the protocol is a Python protocol, pass the
+        file contents here.
         :param protocol_json: If the protocol is a json file, pass the contents
         here.
         :param simulate: True to simulate; False to execute. If thsi is not an
@@ -31,10 +30,10 @@ def run(protocol_callable: Callable[['ProtocolContext'], None] = None,
         """
         if not os.environ.get('RUNNING_ON_PI'):
             simulate = True # noqa - will be used later
-        if None is context:
+        if None is context and simulate:
             context = ProtocolContext()
-        if protocol_callable:
-            pass
+        if protocol_bytes:
+            back_compat.run(protocol_bytes, context)
         elif protocol_json:
             pass
 
@@ -51,7 +50,8 @@ class ProtocolContext:
         pass
 
     def load_labware(
-            self, labware_obj: Labware, location: str):
+            self, labware_obj: Labware, location: str,
+            label: str=None, share: bool = False):
         """ Specify the presence of a piece of labware on the OT2 deck.
 
         This function loads the labware specified by ``labware``
@@ -76,7 +76,7 @@ class ProtocolContext:
         return labware
 
     @property
-    def loaded_labwares(self) -> OrderedDict[str, Labware]:
+    def loaded_labwares(self) -> OrderedDict:
         """ Get the labwares that have been loaded into the protocol context.
 
         The return value is a dict mapping locations to labware, sorted
@@ -96,7 +96,7 @@ class ProtocolContext:
         pass
 
     @property
-    def loaded_instruments(self) -> OrderedDict[str, 'InstrumentContext']:
+    def loaded_instruments(self) -> OrderedDict:
         """ Get the instruments that have been loaded into the protocol context
 
         The return value is a dict mapping locations to instruments, sorted
