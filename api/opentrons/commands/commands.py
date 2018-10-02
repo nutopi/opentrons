@@ -346,7 +346,7 @@ def _do_publish(before, after, command, meta=None):
             # command is expecting instrument first.
             if 'instrument' in inspect.getfullargspec(command).args:
                 # We are also checking if call arguments have 'self' and
-                # don't have instruments specified, in which casen
+                # don't have instruments specified, in which case
                 # instruments should take precedence.
                 if 'self' in call_args and 'instrument' not in call_args:
                     call_args['instrument'] = call_args['self']
