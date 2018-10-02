@@ -19,7 +19,7 @@ from opentrons import types
 from .simulator import Simulator
 try:
     from .controller import Controller
-except ModuleNotFoundError:
+except AttributeError:
     # implies windows
     Controller = None  # type: ignore
 
