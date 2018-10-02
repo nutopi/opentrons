@@ -2,7 +2,7 @@ import pytest
 from opentrons import types
 from opentrons import hardware_control as hc
 
-if not hc.controller:
+if not hc.Controller:
     pytest.skip('hardware controller not available (probably windows)',
                 allow_module_level=True)
 
