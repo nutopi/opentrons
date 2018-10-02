@@ -16,12 +16,12 @@ import logging
 import enum
 from typing import Dict, Union
 from opentrons import types
-from . import simulator
+from .simulator import Simulator
 try:
-    from . import controller
+    from .controller import Controller
 except ModuleNotFoundError:
     # implies windows
-    controller = None  # type: ignore
+    Controller = None  # type: ignore
 
 
 mod_log = logging.getLogger(__name__)
@@ -51,7 +51,7 @@ class MustHomeError(RuntimeError):
     pass
 
 
-_Backend = Union[controller.Controller, simulator.Simulator]
+_Backend = Union[Controller, Simulator]
 
 
 class API:
@@ -96,10 +96,10 @@ class API:
         real robot only one true hardware controller may be active at one
         time.
         """
-        if None is controller:
+        if None is Controller:
             raise RuntimeError(
                 'The hardware controller may only be instantiated on a robot')
-        return cls(controller.Controller(config, loop),
+        return cls(Controller(config, loop),
                    config=config, loop=loop)
 
     @classmethod
@@ -111,7 +111,7 @@ class API:
         This method may be used both on a real robot and on dev machines.
         Multiple simulating hardware controllers may be active at one time.
         """
-        return cls(simulator.Simulator(config, loop),
+        return cls(Simulator(config, loop),
                    config=config, loop=loop)
 
     # Query API
